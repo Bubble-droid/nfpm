@@ -532,7 +532,15 @@ archlinux:
 
   # The packager identifies the organization packaging the software
   # rather than the developer. Defaults to "Unknown Packager".
+  # This will expand any env var you set in the field, e.g. packager: ${PACKAGER}
   packager: GoReleaser <staff@goreleaser.com>
+
+  # Optional dependencies. Writes `optdepend = <name>: <description>` lines
+  # to the package .PKGINFO.
+  # See: https://wiki.archlinux.org/title/PKGBUILD#optdepends
+  optdepends:
+  - "bash: for shell completion"
+  - "zsh: for alternative completion"
 
   # Arch Linux specific scripts.
   scripts:

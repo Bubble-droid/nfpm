@@ -221,6 +221,7 @@ func (c *Config) expandEnvVars() {
 		c.Overrides[or].Provides = c.expandEnvVarsStringSlice(c.Overrides[or].Provides)
 		c.Overrides[or].Suggests = c.expandEnvVarsStringSlice(c.Overrides[or].Suggests)
 		c.Overrides[or].RPM.Requires.Post = c.expandEnvVarsStringSlice(c.Overrides[or].RPM.Requires.Post)
+		c.Overrides[or].ArchLinux.OptDepends = c.expandEnvVarsStringSlice(c.Overrides[or].ArchLinux.OptDepends)
 		c.Overrides[or].Contents = c.expandEnvVarsContents(c.Overrides[or].Contents)
 	}
 	c.Conflicts = c.expandEnvVarsStringSlice(c.Conflicts)
@@ -229,6 +230,7 @@ func (c *Config) expandEnvVars() {
 	c.Recommends = c.expandEnvVarsStringSlice(c.Recommends)
 	c.Provides = c.expandEnvVarsStringSlice(c.Provides)
 	c.Suggests = c.expandEnvVarsStringSlice(c.Suggests)
+	c.ArchLinux.OptDepends = c.expandEnvVarsStringSlice(c.ArchLinux.OptDepends)
 	c.RPM.Requires.Post = c.expandEnvVarsStringSlice(c.RPM.Requires.Post)
 	c.Contents = c.expandEnvVarsContents(c.Contents)
 
@@ -270,6 +272,9 @@ func (c *Config) expandEnvVars() {
 
 	// RPM specific
 	c.RPM.Packager = os.Expand(c.RPM.Packager, c.envMappingFunc)
+
+	// ArchLinux specific
+	c.ArchLinux.Packager = os.Expand(c.ArchLinux.Packager, c.envMappingFunc)
 
 	// Deb specific
 	for k, v := range c.Deb.Fields {
@@ -375,10 +380,11 @@ type Overridables struct {
 }
 
 type ArchLinux struct {
-	Pkgbase  string           `yaml:"pkgbase,omitempty" json:"pkgbase,omitempty" jsonschema:"title=explicitly specify the name used to refer to a split package, defaults to name"`
-	Arch     string           `yaml:"arch,omitempty" json:"arch,omitempty" jsonschema:"title=architecture in archlinux nomenclature"`
-	Packager string           `yaml:"packager,omitempty" json:"packager,omitempty" jsonschema:"title=organization that packaged the software"`
-	Scripts  ArchLinuxScripts `yaml:"scripts,omitempty" json:"scripts,omitempty" jsonschema:"title=archlinux-specific scripts"`
+	Pkgbase    string           `yaml:"pkgbase,omitempty" json:"pkgbase,omitempty" jsonschema:"title=explicitly specify the name used to refer to a split package, defaults to name"`
+	Arch       string           `yaml:"arch,omitempty" json:"arch,omitempty" jsonschema:"title=architecture in archlinux nomenclature"`
+	Packager   string           `yaml:"packager,omitempty" json:"packager,omitempty" jsonschema:"title=organization that packaged the software"`
+	OptDepends []string         `yaml:"optdepends,omitempty" json:"optdepends,omitempty" jsonschema:"title=optdepends directive,example=nfpm"`
+	Scripts    ArchLinuxScripts `yaml:"scripts,omitempty" json:"scripts,omitempty" jsonschema:"title=archlinux-specific scripts"`
 }
 
 type ArchLinuxScripts struct {

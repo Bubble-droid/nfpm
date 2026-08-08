@@ -173,6 +173,27 @@ func TestArchPkgbase(t *testing.T) {
 	require.Equal(t, "foo", fields["pkgbase"])
 }
 
+func TestArchOptDepends(t *testing.T) {
+	info := exampleInfo()
+	info.ArchLinux.OptDepends = []string{
+		"bash: for shell completion",
+		"zsh: for alternative completion",
+	}
+	pkginfoData, err := makeTestPkginfo(t, info)
+	require.NoError(t, err)
+	require.Contains(t, string(pkginfoData), "optdepend = bash: for shell completion\n")
+	require.Contains(t, string(pkginfoData), "optdepend = zsh: for alternative completion\n")
+}
+
+func TestArchPackager(t *testing.T) {
+	info := exampleInfo()
+	info.ArchLinux.Packager = "GoReleaser <staff@goreleaser.com>"
+	pkginfoData, err := makeTestPkginfo(t, info)
+	require.NoError(t, err)
+	fields := extractPkginfoFields(pkginfoData)
+	require.Equal(t, "GoReleaser <staff@goreleaser.com>", fields["packager"])
+}
+
 func TestArchInvalidName(t *testing.T) {
 	info := exampleInfo()
 	info.Name = "#"

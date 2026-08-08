@@ -359,6 +359,13 @@ func createPkginfo(info *nfpm.Info, tw *tar.Writer, totalSize int64) (*MtreeEntr
 		}
 	}
 
+	for _, optdep := range info.ArchLinux.OptDepends {
+		err = writeKVPair(buf, "optdepend", optdep)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	for _, content := range info.Contents {
 		if content.Type == files.TypeConfig || content.Type == files.TypeConfigNoReplace || content.Type == files.TypeConfigMissingOK {
 			path := files.AsRelativePath(content.Destination)

@@ -484,6 +484,39 @@ maintainer: '"$GIT_COMMITTER_NAME" <$GIT_COMMITTER_EMAIL>'
 		require.Equal(t, packager, info.RPM.Packager)
 	})
 
+	t.Run("archlinux packager", func(t *testing.T) {
+		t.Setenv("PACKAGER", packager)
+		info, err := nfpm.Parse(strings.NewReader("name: foo\narchlinux:\n  packager: $PACKAGER"))
+		require.NoError(t, err)
+		require.Equal(t, packager, info.ArchLinux.Packager)
+	})
+
+	t.Run("archlinux optdepends", func(t *testing.T) {
+		t.Setenv("VERSION", version)
+		info, err := nfpm.Parse(strings.NewReader(`---
+name: foo
+archlinux:
+  optdepends:
+  - "package: for ${VERSION}"
+`))
+		require.NoError(t, err)
+		require.Equal(t, []string{"package: for 1.0.0"}, info.ArchLinux.OptDepends)
+	})
+
+	t.Run("archlinux optdepends overrides", func(t *testing.T) {
+		t.Setenv("VERSION", version)
+		info, err := nfpm.Parse(strings.NewReader(`---
+name: foo
+overrides:
+  archlinux:
+    archlinux:
+      optdepends:
+      - "package: for ${VERSION}"
+`))
+		require.NoError(t, err)
+		require.Equal(t, []string{"package: for 1.0.0"}, info.Overrides["archlinux"].ArchLinux.OptDepends)
+	})
+
 	t.Run("depends", func(t *testing.T) {
 		t.Setenv("VERSION", version)
 		info, err := nfpm.Parse(strings.NewReader(`---
